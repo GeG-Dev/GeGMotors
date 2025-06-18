@@ -1,0 +1,42 @@
+#include <GeGMotor.h>
+
+//------------------------мотор 1--------------
+#define pwmA 11
+#define inOne 3
+#define inTwo 4
+//------------------------мотор 2--------------
+#define pwmB 11
+#define inThree 7
+#define inFour 8
+
+#define smoothInterv 20   //интервал ускорения (в МС)
+#define acceleration 5  //ускорение (работает при движении вперед и назад)(число на которое будет увеличиваться скорость каждые smoothInterv миллисекунд)
+#define accelerationStop 15 // то же самое что и acceleration  но для тормозов 
+
+L298N motor1(pwmA , inOne , inTwo);
+L298N motor2(pwmB , inThree , inFour);
+
+int speed = 200;
+
+void setup(){
+  motor1.smoothMove(smoothInterv , speed);// плавно едем вперед >1мотор< (smoothInterv - насколько быстро будем ускорятся до заданной скорости чем больше smoothInterv тем медленее разгон)
+  delay(1000);
+  motor2.smoothMove(smoothInterv , -speed);// плавно едем назад >2мотор<
+  delay(1000);
+  motor1.smoothStop(smoothInterv); //плавное торможение (аналог smoothMove)  мотор 1 
+  motor2.smoothStop(smoothInterv); //плавное торможение (аналог smoothMove)  мотор 2
+  delay(1000);
+
+  motor1.smoothSettings(smoothInterv , acceleration , accelerationStop);
+  motor1.autoRun(speed);//движемся вперед плавно мотор 1
+  delay(1000);
+  motor2.autoRun(-speed);//движемся назад плавно мотор 2
+  delay(1000);
+
+  motor1.smoothStop(accelerationStop); //плавная остановка мотор 1
+  motor2.smoothStop(accelerationStop); //плавная остановка мотор 2
+}
+
+void loop(){
+    //тут может быть ваш код
+}
